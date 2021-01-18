@@ -49,6 +49,9 @@ class FilterChildBuilderTest extends TestCase
         $inner->expects($this->once())->method('depends')->with('foo', 'bar');
         $this->assertSame($builder, $builder->depends('foo', 'bar'));
 
+        $inner->expects($this->once())->method('childFactory')->with(function() {});
+        $this->assertSame($builder, $builder->childFactory(function() {}));
+
         $child = $this->builder->length(['min' => 3])->buildChild()->setParent(new Form(new ChildrenCollection()));
         $this->assertFalse($child->element()->submit('a')->valid());
         $this->assertTrue($child->element()->submit('aaa')->valid());

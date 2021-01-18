@@ -15,7 +15,7 @@ jobs:
         - composer global require infection/infection
       script:
         - composer psalm
-        - ~/.config/composer/vendor/bin/infection --min-msi=90
+        - ~/.config/composer/vendor/bin/infection -s --min-msi=90
 
 install:
   - travis_retry composer install

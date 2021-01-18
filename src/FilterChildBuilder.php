@@ -122,6 +122,16 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     /**
      * {@inheritdoc}
      */
+    public function childFactory($factory)
+    {
+        $this->builder->childFactory($factory);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildChild(): ChildInterface
     {
         return $this->builder->buildChild();

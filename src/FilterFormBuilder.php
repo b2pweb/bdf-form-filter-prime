@@ -99,7 +99,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @return FilterChildBuilder|StringElementBuilder
      * @psalm-return FilterChildBuilder<StringElementBuilder>
      */
-    public function string(string $name, $default = null): ChildBuilderInterface
+    public function string(string $name, ?string $default = null): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->string($name, $default));
     }
@@ -110,7 +110,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @return FilterChildBuilder|IntegerElementBuilder
      * @psalm-return FilterChildBuilder<IntegerElementBuilder>
      */
-    public function integer(string $name, $default = null): ChildBuilderInterface
+    public function integer(string $name, ?int $default = null): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->integer($name, $default));
     }
@@ -121,7 +121,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @return FilterChildBuilder|FloatElementBuilder
      * @psalm-return FilterChildBuilder<FloatElementBuilder>
      */
-    public function float(string $name, $default = null): ChildBuilderInterface
+    public function float(string $name, ?float $default = null): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->float($name, $default));
     }
