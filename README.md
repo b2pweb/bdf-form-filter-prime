@@ -21,7 +21,7 @@ composer require b2pweb/bdf-form-form-filter-prime
 
 ## Basic usage
 
-To create a form filter, simply extends the class [`FilterForm`](src/FilterForm.php) and implements method `CustomForm::configureFilters()` :
+To create a form filter, simply extends the class [`FilterForm`](src/FilterForm.php) and implements method `FilterForm::configureFilters()` :
 
 ```php
 <?php

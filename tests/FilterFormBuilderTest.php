@@ -71,6 +71,20 @@ class FilterFormBuilderTest extends TestCase
     /**
      *
      */
+    public function test_delegated_methods_default_parameter()
+    {
+        $builder = new FilterFormBuilder($inner = $this->createMock(FormBuilderInterface::class));
+
+        $inner->expects($this->once())->method('satisfy')->with(function() {}, 'foo', true);
+        $this->assertSame($builder, $builder->satisfy(function() {}, 'foo'));
+
+        $inner->expects($this->once())->method('transformer')->with(function() {}, true);
+        $this->assertSame($builder, $builder->transformer(function() {}));
+    }
+
+    /**
+     *
+     */
     public function test_magic_call()
     {
         $inner = new class extends FormBuilder {

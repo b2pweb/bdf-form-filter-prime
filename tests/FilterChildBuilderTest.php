@@ -57,6 +57,17 @@ class FilterChildBuilderTest extends TestCase
     /**
      *
      */
+    public function test_delegated_methods_default_parameters()
+    {
+        $builder = new FilterChildBuilder($inner = $this->createMock(ChildBuilderInterfaceWithFactory::class));
+
+        $inner->expects($this->once())->method('filter')->with(function() {}, true);
+        $this->assertSame($builder, $builder->filter(function() {}));
+    }
+
+    /**
+     *
+     */
     public function test_default()
     {
         $child = $this->builder->buildChild();
@@ -315,6 +326,26 @@ class FilterChildBuilderTest extends TestCase
         $child->fill($c);
 
         $this->assertEquals(new PrimeCriteria(['foo' => (new Like('bar'))->contains()->escape()]), $c);
+    }
+
+    /**
+     *
+     */
+    public function test_custom_hydrator()
+    {
+        $child = $this->builder->hydrator(new Criteria('aaa'))->buildChild();
+
+        $this->assertInstanceOf(Child::class, $child);
+        $this->assertInstanceOf(StringElement::class, $child->element());
+        $this->assertEquals('foo', $child->name());
+
+        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child->submit(['foo' => 'bar']);
+
+        $c = new PrimeCriteria();
+        $child->fill($c);
+
+        $this->assertEquals(new PrimeCriteria(['aaa' => 'bar']), $c);
     }
 }
 

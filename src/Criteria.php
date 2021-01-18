@@ -75,7 +75,7 @@ final class Criteria extends AbstractAccessor implements HydratorInterface
      *
      * @return bool
      */
-    public function isEmpty($value): bool
+    private function isEmpty($value): bool
     {
         if ($value === null) {
             return true;
