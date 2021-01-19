@@ -57,8 +57,7 @@ class FilterFormTest extends TestCase
         $prime->registerRepository(Person::class, $repository = $this->createMock(RepositoryInterface::class));
         $form = new PersonFormFilter(null, $prime);
 
-        // Change when value cache is fixed
-        $repository->expects($this->exactly(2))->method('criteria')->willReturnCallback(function () { return new PrimeCriteria(); });
+        $repository->expects($this->once())->method('criteria')->willReturnCallback(function () { return new PrimeCriteria(); });
 
         $form->submit([
             'firstName' => 'J',
