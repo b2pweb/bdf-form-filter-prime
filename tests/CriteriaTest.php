@@ -33,6 +33,7 @@ class CriteriaTest extends TestCase
             ['bar'],
             [1],
             [0],
+            [0.0],
             [false],
         ];
     }

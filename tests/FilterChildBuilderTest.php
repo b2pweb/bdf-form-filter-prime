@@ -350,6 +350,26 @@ class FilterChildBuilderTest extends TestCase
 
         $this->assertEquals(new PrimeCriteria(['aaa' => 'bar']), $c);
     }
+
+    /**
+     *
+     */
+    public function test_custom_hydrator_should_have_priority()
+    {
+        $child = $this->builder->hydrator(new Criteria('aaa'))->criterion()->buildChild();
+
+        $this->assertInstanceOf(Child::class, $child);
+        $this->assertInstanceOf(StringElement::class, $child->element());
+        $this->assertEquals('foo', $child->name());
+
+        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child->submit(['foo' => 'bar']);
+
+        $c = new PrimeCriteria();
+        $child->fill($c);
+
+        $this->assertEquals(new PrimeCriteria(['aaa' => 'bar']), $c);
+    }
 }
 
 // @todo to delete

@@ -65,7 +65,6 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     {
         $this->builder = $builder;
 
-        // @todo interface
         $builder->childFactory($this);
     }
 
