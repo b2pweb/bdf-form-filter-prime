@@ -4,6 +4,7 @@ namespace Bdf\Form\Filter;
 
 use Bdf\Form\Aggregate\Collection\ChildrenCollection;
 use Bdf\Form\Aggregate\Form;
+use Bdf\Form\Aggregate\FormBuilder;
 use Bdf\Form\Child\Child;
 use Bdf\Form\Child\ChildBuilder;
 use Bdf\Form\Child\ChildBuilderInterface;
@@ -43,6 +44,9 @@ class FilterChildBuilderTest extends TestCase
         $inner->expects($this->once())->method('filter')->with(function() {}, false);
         $this->assertSame($builder, $builder->filter(function() {}, false));
 
+        $inner->expects($this->once())->method('modelTransformer')->with(function() {}, false);
+        $this->assertSame($builder, $builder->modelTransformer(function() {}, false));
+
         $inner->expects($this->once())->method('default')->with('foo');
         $this->assertSame($builder, $builder->default('foo'));
 
@@ -55,6 +59,10 @@ class FilterChildBuilderTest extends TestCase
         $child = $this->builder->length(['min' => 3])->buildChild()->setParent(new Form(new ChildrenCollection()));
         $this->assertFalse($child->element()->submit('a')->valid());
         $this->assertTrue($child->element()->submit('aaa')->valid());
+
+        $builder = new FilterChildBuilder(new ChildBuilder('foo', new FormBuilder()));
+        $this->assertInstanceOf(ChildBuilder::class, $subBuilder = $builder->integer('bar'));
+        $this->assertNotSame($builder, $subBuilder);
     }
 
     /**
@@ -66,6 +74,9 @@ class FilterChildBuilderTest extends TestCase
 
         $inner->expects($this->once())->method('filter')->with(function() {}, true);
         $this->assertSame($builder, $builder->filter(function() {}));
+
+        $inner->expects($this->once())->method('modelTransformer')->with(function() {}, true);
+        $this->assertSame($builder, $builder->modelTransformer(function() {}));
     }
 
     /**

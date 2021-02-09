@@ -45,13 +45,11 @@ final class Criteria extends AbstractAccessor implements HydratorInterface
     /**
      * {@inheritdoc}
      */
-    public function hydrate(&$criteria)
+    public function hydrate(&$target, $value)
     {
-        if (!$criteria instanceof PrimeCriteria) {
+        if (!$target instanceof PrimeCriteria) {
             throw new TypeError('$criteria must be an instance of '.PrimeCriteria::class);
         }
-
-        $value = $this->input->element()->value();
 
         if ($this->isEmpty($value)) {
             return;
@@ -62,9 +60,9 @@ final class Criteria extends AbstractAccessor implements HydratorInterface
         }
 
         if ($this->customAccessor !== null) {
-            ($this->customAccessor)($criteria, $value, self::HYDRATION, $this);
+            ($this->customAccessor)($target, $value, self::HYDRATION, $this);
         } else {
-            $criteria->add($this->getPropertyName(), $value);
+            $target->add($this->getPropertyName(), $value);
         }
     }
 

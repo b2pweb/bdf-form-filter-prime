@@ -7,10 +7,14 @@ use Bdf\Form\Child\ChildBuilderInterface;
 use Bdf\Form\Child\ChildCreationStrategyInterface;
 use Bdf\Form\Child\ChildInterface;
 use Bdf\Form\Child\Http\HttpFieldsInterface;
+use Bdf\Form\ElementBuilderInterface;
 use Bdf\Form\ElementInterface;
 use Bdf\Form\PropertyAccess\ExtractorInterface;
 use Bdf\Form\PropertyAccess\HydratorInterface;
+use Bdf\Form\Transformer\TransformerInterface;
+use Bdf\Form\Util\MagicCallForwarding;
 use Bdf\Prime\Query\Expression\Like;
+use Symfony\Component\Form\DataTransformerInterface;
 
 /**
  * Decorate a ChildBuilderInterface to handle filter building
@@ -131,6 +135,16 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     /**
      * {@inheritdoc}
      */
+    public function modelTransformer($transformer, bool $append = true)
+    {
+        $this->builder->modelTransformer($transformer, $append);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildChild(): ChildInterface
     {
         return $this->builder->buildChild();
@@ -139,9 +153,9 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     /**
      * {@inheritdoc}
      */
-    public function __invoke(string $name, ElementInterface $element, HttpFieldsInterface $fields, array $filters, $defaultValue, ?HydratorInterface $hydrator, ?ExtractorInterface $extractor, array $dependencies): ChildInterface
+    public function __invoke(string $name, ElementInterface $element, HttpFieldsInterface $fields, array $filters, $defaultValue, ?HydratorInterface $hydrator, ?ExtractorInterface $extractor, array $dependencies, ?TransformerInterface $modelTransformer): ChildInterface
     {
-        return new Child($name, $element, $fields, $filters, $defaultValue, $hydrator ?? $this->createHydrator($name), $extractor, $dependencies);
+        return new Child($name, $element, $fields, $filters, $defaultValue, $hydrator ?? $this->createHydrator($name), $extractor, $dependencies, $modelTransformer);
     }
 
     /**
@@ -330,13 +344,13 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
      * @param string $method
      * @param array $arguments
      *
-     * @return $this
+     * @return $this|mixed
      */
     public function __call(string $method, array $arguments)
     {
-        $this->builder->$method(...$arguments);
+        $ret = $this->builder->$method(...$arguments);
 
-        return $this;
+        return $ret === $this->builder ? $this : $ret;
     }
 
     /**
