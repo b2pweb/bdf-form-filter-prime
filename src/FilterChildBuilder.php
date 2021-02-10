@@ -2,19 +2,12 @@
 
 namespace Bdf\Form\Filter;
 
-use Bdf\Form\Child\Child;
 use Bdf\Form\Child\ChildBuilderInterface;
-use Bdf\Form\Child\ChildCreationStrategyInterface;
 use Bdf\Form\Child\ChildInterface;
-use Bdf\Form\Child\Http\HttpFieldsInterface;
-use Bdf\Form\ElementBuilderInterface;
-use Bdf\Form\ElementInterface;
+use Bdf\Form\Child\ChildParameters;
 use Bdf\Form\PropertyAccess\ExtractorInterface;
 use Bdf\Form\PropertyAccess\HydratorInterface;
-use Bdf\Form\Transformer\TransformerInterface;
-use Bdf\Form\Util\MagicCallForwarding;
 use Bdf\Prime\Query\Expression\Like;
-use Symfony\Component\Form\DataTransformerInterface;
 
 /**
  * Decorate a ChildBuilderInterface to handle filter building
@@ -30,7 +23,7 @@ use Symfony\Component\Form\DataTransformerInterface;
  *
  * @mixin B
  */
-class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategyInterface
+class FilterChildBuilder implements ChildBuilderInterface
 {
     /**
      * The inner builder
@@ -69,7 +62,7 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     {
         $this->builder = $builder;
 
-        $builder->childFactory($this);
+        $builder->addParametersConfigurator([$this, 'provideDefaultHydrator']);
     }
 
     /**
@@ -125,16 +118,6 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     /**
      * {@inheritdoc}
      */
-    public function childFactory($factory)
-    {
-        $this->builder->childFactory($factory);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function modelTransformer($transformer, bool $append = true)
     {
         $this->builder->modelTransformer($transformer, $append);
@@ -145,17 +128,19 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
     /**
      * {@inheritdoc}
      */
-    public function buildChild(): ChildInterface
+    public function addParametersConfigurator(callable $configurator)
     {
-        return $this->builder->buildChild();
+        $this->builder->addParametersConfigurator($configurator);
+
+        return $this;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function __invoke(string $name, ElementInterface $element, HttpFieldsInterface $fields, array $filters, $defaultValue, ?HydratorInterface $hydrator, ?ExtractorInterface $extractor, array $dependencies, ?TransformerInterface $modelTransformer): ChildInterface
+    public function buildChild(): ChildInterface
     {
-        return new Child($name, $element, $fields, $filters, $defaultValue, $hydrator ?? $this->createHydrator($name), $extractor, $dependencies, $modelTransformer);
+        return $this->builder->buildChild();
     }
 
     /**
@@ -351,6 +336,19 @@ class FilterChildBuilder implements ChildBuilderInterface, ChildCreationStrategy
         $ret = $this->builder->$method(...$arguments);
 
         return $ret === $this->builder ? $this : $ret;
+    }
+
+    /**
+     * Provide criteria hydrator if not yet defined on the child
+     *
+     * @param ChildParameters $parameters
+     * @internal
+     */
+    public function provideDefaultHydrator(ChildParameters $parameters): void
+    {
+        if (!$parameters->hydrator) {
+            $parameters->hydrator = $this->createHydrator($parameters->name);
+        }
     }
 
     /**
