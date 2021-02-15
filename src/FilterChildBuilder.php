@@ -295,32 +295,32 @@ class FilterChildBuilder implements ChildBuilderInterface
      * Define a like criterion for perform a "start with" search
      * The created criterion will be in form : "LIKE xxx%"
      *
-     * Note: the field value will be escaped
+     * @param bool $escape True to escape the value (by default)
      *
      * @return $this
      *
      * @see FilterChildBuilder::like() To define a simple like query
      * @see FilterChildBuilder::contains() To define a "LIKE %xxx%"
      */
-    public function startWith()
+    public function startWith(bool $escape = true)
     {
-        return $this->criterion(null, function (string $value) { return (new Like($value))->escape()->startsWith(); });
+        return $this->criterion(null, function (string $value) use($escape) { return (new Like($value))->escape($escape)->startsWith(); });
     }
 
     /**
      * Define a like criterion for perform a "contains" search
      * The created criterion will be in form : "LIKE %xxx%"
      *
-     * Note: the field value will be escaped
+     * @param bool $escape True to escape the value (by default)
      *
      * @return $this
      *
      * @see FilterChildBuilder::like() To define a simple like query
      * @see FilterChildBuilder::startWith() To define a "LIKE xxx%"
      */
-    public function contains()
+    public function contains(bool $escape = true)
     {
-        return $this->criterion(null, function (string $value) { return (new Like($value))->escape()->contains(); });
+        return $this->criterion(null, function (string $value) use($escape) { return (new Like($value))->escape($escape)->contains(); });
     }
 
     /**

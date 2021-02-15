@@ -325,6 +325,46 @@ class FilterChildBuilderTest extends TestCase
     /**
      *
      */
+    public function test_startWith_escaped()
+    {
+        $child = $this->builder->startWith()->buildChild();
+
+        $this->assertInstanceOf(Child::class, $child);
+        $this->assertInstanceOf(StringElement::class, $child->element());
+        $this->assertEquals('foo', $child->name());
+
+        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child->submit(['foo' => '%%']);
+
+        $c = new PrimeCriteria();
+        $child->fill($c);
+
+        $this->assertEquals(new PrimeCriteria(['foo' => (new Like('%%'))->startsWith()->escape()]), $c);
+    }
+
+    /**
+     *
+     */
+    public function test_startWith_not_escaped()
+    {
+        $child = $this->builder->startWith(false)->buildChild();
+
+        $this->assertInstanceOf(Child::class, $child);
+        $this->assertInstanceOf(StringElement::class, $child->element());
+        $this->assertEquals('foo', $child->name());
+
+        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child->submit(['foo' => '%%']);
+
+        $c = new PrimeCriteria();
+        $child->fill($c);
+
+        $this->assertEquals(new PrimeCriteria(['foo' => (new Like('%%'))->startsWith()]), $c);
+    }
+
+    /**
+     *
+     */
     public function test_contains()
     {
         $child = $this->builder->contains()->buildChild();
@@ -340,6 +380,46 @@ class FilterChildBuilderTest extends TestCase
         $child->fill($c);
 
         $this->assertEquals(new PrimeCriteria(['foo' => (new Like('bar'))->contains()->escape()]), $c);
+    }
+
+    /**
+     *
+     */
+    public function test_contains_escaped()
+    {
+        $child = $this->builder->contains()->buildChild();
+
+        $this->assertInstanceOf(Child::class, $child);
+        $this->assertInstanceOf(StringElement::class, $child->element());
+        $this->assertEquals('foo', $child->name());
+
+        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child->submit(['foo' => '%%']);
+
+        $c = new PrimeCriteria();
+        $child->fill($c);
+
+        $this->assertEquals(new PrimeCriteria(['foo' => (new Like('%%'))->contains()->escape()]), $c);
+    }
+
+    /**
+     *
+     */
+    public function test_contains_not_escaped()
+    {
+        $child = $this->builder->contains(false)->buildChild();
+
+        $this->assertInstanceOf(Child::class, $child);
+        $this->assertInstanceOf(StringElement::class, $child->element());
+        $this->assertEquals('foo', $child->name());
+
+        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child->submit(['foo' => '%%']);
+
+        $c = new PrimeCriteria();
+        $child->fill($c);
+
+        $this->assertEquals(new PrimeCriteria(['foo' => (new Like('%%'))->contains()]), $c);
     }
 
     /**
