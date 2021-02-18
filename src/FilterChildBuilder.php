@@ -7,6 +7,7 @@ use Bdf\Form\Child\ChildInterface;
 use Bdf\Form\Child\ChildParameters;
 use Bdf\Form\PropertyAccess\ExtractorInterface;
 use Bdf\Form\PropertyAccess\HydratorInterface;
+use Bdf\Form\Util\HttpValue;
 use Bdf\Prime\Query\Expression\Like;
 
 /**
@@ -304,7 +305,13 @@ class FilterChildBuilder implements ChildBuilderInterface
      */
     public function startWith(bool $escape = true)
     {
-        return $this->criterion(null, function (string $value) use($escape) { return (new Like($value))->escape($escape)->startsWith(); });
+        return $this->criterion(null, function (?string $value) use($escape) {
+            if (HttpValue::isEmpty($value)) {
+                return null;
+            }
+
+            return (new Like($value))->escape($escape)->startsWith();
+        });
     }
 
     /**
@@ -320,7 +327,13 @@ class FilterChildBuilder implements ChildBuilderInterface
      */
     public function contains(bool $escape = true)
     {
-        return $this->criterion(null, function (string $value) use($escape) { return (new Like($value))->escape($escape)->contains(); });
+        return $this->criterion(null, function (?string $value) use($escape) {
+            if (HttpValue::isEmpty($value)) {
+                return null;
+            }
+
+            return (new Like($value))->escape($escape)->contains();
+        });
     }
 
     /**
