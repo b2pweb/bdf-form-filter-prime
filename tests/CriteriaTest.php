@@ -5,6 +5,7 @@ namespace Bdf\Form\Filter;
 use Bdf\Form\Aggregate\Collection\ChildrenCollection;
 use Bdf\Form\Aggregate\Form;
 use Bdf\Form\Child\ChildBuilder;
+use Bdf\Form\Child\ChildInterface;
 use Bdf\Form\Leaf\StringElementBuilder;
 use Bdf\Form\PropertyAccess\HydratorInterface;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
@@ -31,6 +32,7 @@ class CriteriaTest extends TestCase
     {
         return [
             ['bar'],
+            ['0'],
             [1],
             [0],
             [0.0],
@@ -72,7 +74,11 @@ class CriteriaTest extends TestCase
      */
     public function test_hydrate_with_transformer()
     {
-        $child = (new ChildBuilder('foo', new StringElementBuilder()))->hydrator(new Criteria(function ($value) {
+        $child = (new ChildBuilder('foo', new StringElementBuilder()))->hydrator(new Criteria(function ($value, $input, $mode, $hydrator) {
+            $this->assertInstanceOf(ChildInterface::class, $input);
+            $this->assertSame(HydratorInterface::HYDRATION, $mode);
+            $this->assertInstanceOf(Criteria::class, $hydrator);
+
             return strtoupper($value);
         }))->buildChild();
         $child->element()->import('bar');

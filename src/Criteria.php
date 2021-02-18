@@ -51,12 +51,12 @@ final class Criteria extends AbstractAccessor implements HydratorInterface
             throw new TypeError('$criteria must be an instance of '.PrimeCriteria::class);
         }
 
-        if ($this->isEmpty($value)) {
-            return;
+        if ($this->transformer) {
+            $value = ($this->transformer)($value, $this->input, self::HYDRATION, $this);
         }
 
-        if ($this->transformer) {
-            $value = ($this->transformer)($value, $this->input);
+        if ($this->isEmpty($value)) {
+            return;
         }
 
         if ($this->customAccessor !== null) {
