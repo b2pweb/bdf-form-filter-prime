@@ -56,7 +56,7 @@ class FilterChildBuilderTest extends TestCase
         $inner->expects($this->once())->method('addParametersConfigurator')->with(function() {});
         $this->assertSame($builder, $builder->addParametersConfigurator(function() {}));
 
-        $child = $this->builder->length(['min' => 3])->buildChild()->setParent(new Form(new ChildrenCollection()));
+        $child = $this->builder->length(['min' => 3])->buildChild()->setParent($parent = new Form(new ChildrenCollection()));
         $this->assertFalse($child->element()->submit('a')->valid());
         $this->assertTrue($child->element()->submit('aaa')->valid());
 
@@ -109,7 +109,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -129,7 +129,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -151,7 +151,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -173,7 +173,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -193,7 +193,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -213,7 +213,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -233,7 +233,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -253,7 +253,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -273,7 +273,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -293,7 +293,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -313,7 +313,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -333,7 +333,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => '%%']);
 
         $c = new PrimeCriteria();
@@ -353,7 +353,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => '%%']);
 
         $c = new PrimeCriteria();
@@ -373,7 +373,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => null]);
 
         $c = new PrimeCriteria();
@@ -393,7 +393,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -413,7 +413,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => null]);
 
         $c = new PrimeCriteria();
@@ -433,7 +433,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => '%%']);
 
         $c = new PrimeCriteria();
@@ -453,7 +453,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => '%%']);
 
         $c = new PrimeCriteria();
@@ -473,7 +473,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();
@@ -493,7 +493,7 @@ class FilterChildBuilderTest extends TestCase
         $this->assertInstanceOf(StringElement::class, $child->element());
         $this->assertEquals('foo', $child->name());
 
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
         $child->submit(['foo' => 'bar']);
 
         $c = new PrimeCriteria();

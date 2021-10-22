@@ -6,6 +6,7 @@ use Bdf\Form\Aggregate\Collection\ChildrenCollection;
 use Bdf\Form\Aggregate\Form;
 use Bdf\Form\Child\ChildBuilder;
 use Bdf\Form\Child\ChildInterface;
+use Bdf\Form\Leaf\AnyElementBuilder;
 use Bdf\Form\Leaf\StringElementBuilder;
 use Bdf\Form\PropertyAccess\HydratorInterface;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
@@ -18,9 +19,9 @@ class CriteriaTest extends TestCase
      */
     public function test_hydrate($value)
     {
-        $child = (new ChildBuilder('foo', new StringElementBuilder()))->hydrator(new Criteria())->buildChild();
+        $child = (new ChildBuilder('foo', new AnyElementBuilder()))->hydrator(new Criteria())->buildChild();
         $child->element()->import($value);
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
 
         $c = new PrimeCriteria();
         $child->fill($c);
@@ -46,7 +47,7 @@ class CriteriaTest extends TestCase
     public function test_hydrate_no_value_on_field_should_ignore_criterion()
     {
         $child = (new ChildBuilder('foo', new StringElementBuilder()))->hydrator(new Criteria())->buildChild();
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
 
         $c = new PrimeCriteria();
         $child->fill($c);
@@ -61,7 +62,7 @@ class CriteriaTest extends TestCase
     {
         $child = (new ChildBuilder('foo', new StringElementBuilder()))->hydrator(new Criteria('aaa'))->buildChild();
         $child->element()->import('bar');
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
 
         $c = new PrimeCriteria();
         $child->fill($c);
@@ -82,7 +83,7 @@ class CriteriaTest extends TestCase
             return strtoupper($value);
         }))->buildChild();
         $child->element()->import('bar');
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
 
         $c = new PrimeCriteria();
         $child->fill($c);
@@ -103,7 +104,7 @@ class CriteriaTest extends TestCase
             $criteria->add('aaa', 'bbb');
         }))->buildChild();
         $child->element()->import('bar');
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
 
         $c = new PrimeCriteria();
         $child->fill($c);
@@ -121,7 +122,7 @@ class CriteriaTest extends TestCase
 
         $child = (new ChildBuilder('foo', new StringElementBuilder()))->hydrator(new Criteria())->buildChild();
         $child->element()->import('foo');
-        $child = $child->setParent(new Form(new ChildrenCollection()));
+        $child = $child->setParent($parent = new Form(new ChildrenCollection()));
 
         $c = new \stdClass();
         $child->fill($c);
