@@ -82,6 +82,8 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      *
+     * @param non-empty-string $name
+     *
      * @template E as \Bdf\Form\ElementInterface
      * @psalm-param class-string<E> $element
      *
@@ -96,6 +98,8 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      *
+     * @param non-empty-string $name
+     *
      * @return FilterChildBuilder|StringElementBuilder
      * @psalm-return FilterChildBuilder<StringElementBuilder>
      */
@@ -106,6 +110,8 @@ class FilterFormBuilder implements FormBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param non-empty-string $name
      *
      * @return FilterChildBuilder|IntegerElementBuilder
      * @psalm-return FilterChildBuilder<IntegerElementBuilder>
@@ -118,6 +124,8 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      *
+     * @param non-empty-string $name
+     *
      * @return FilterChildBuilder|FloatElementBuilder
      * @psalm-return FilterChildBuilder<FloatElementBuilder>
      */
@@ -128,6 +136,8 @@ class FilterFormBuilder implements FormBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param non-empty-string $name
      *
      * @return FilterChildBuilder|BooleanElementBuilder
      * @psalm-return FilterChildBuilder<BooleanElementBuilder>
@@ -140,6 +150,8 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      *
+     * @param non-empty-string $name
+     *
      * @return FilterChildBuilder|DateTimeElementBuilder
      * @psalm-return FilterChildBuilder<DateTimeElementBuilder>
      */
@@ -150,6 +162,8 @@ class FilterFormBuilder implements FormBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param non-empty-string $name
      *
      * @return FilterChildBuilder|PhoneElementBuilder
      * @psalm-return FilterChildBuilder<PhoneElementBuilder>
@@ -170,6 +184,8 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      *
+     * @param non-empty-string $name
+     *
      * @return FilterChildBuilder|FormBuilderInterface
      * @psalm-return FilterChildBuilder<\Bdf\Form\Aggregate\FormBuilder>
      */
@@ -180,6 +196,8 @@ class FilterFormBuilder implements FormBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param non-empty-string $name
      *
      * @psalm-param class-string<ElementInterface>|null $elementType
      *
@@ -273,7 +291,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * Create a like criteria
      *
-     * @param string $name The field name
+     * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
      * @return FilterChildBuilder|StringElementBuilder
@@ -288,7 +306,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * Create a like criteria for perform a "starts with" search
      *
-     * @param string $name The field name
+     * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
      * @return FilterChildBuilder|StringElementBuilder
@@ -303,7 +321,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * Create a like criteria for perform a "contains" search
      *
-     * @param string $name The field name
+     * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
      * @return FilterChildBuilder|StringElementBuilder

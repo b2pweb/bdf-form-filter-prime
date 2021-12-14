@@ -162,7 +162,7 @@ class FilterChildBuilder implements ChildBuilderInterface
      * });
      * </code>
      *
-     * @param null|string $name The attribute name. If not provided, the field name will be used
+     * @param null|non-empty-string $name The attribute name. If not provided, the field name will be used
      * @param null|callable $criteriaTransformer Transform the criteria value
      *
      * @return $this

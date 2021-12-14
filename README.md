@@ -2,7 +2,7 @@
 
 Helper library for BDF Form to create Prime filters.
 
-[![Build Status](https://travis-ci.com/b2pweb/bdf-form-filter-prime.svg?branch=master)](https://travis-ci.com/b2pweb/bdf-form-filter-prime)
+[![Build Status](https://app.travis-ci.com/b2pweb/bdf-form-filter-prime.svg?branch=master)](https://app.travis-ci.com/b2pweb/bdf-form-filter-prime)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/?branch=master)
 [![Packagist Version](https://img.shields.io/packagist/v/b2pweb/bdf-form-filter-prime.svg)](https://packagist.org/packages/b2pweb/bdf-form-filter-prime)
