@@ -91,6 +91,7 @@ abstract class FilterForm extends CustomForm
             return new PrimeCriteria();
         });
 
+        /** @psalm-suppress RedundantCondition */
         if (!$builder instanceof FilterFormBuilder) {
             $builder = new FilterFormBuilder($builder);
         }
