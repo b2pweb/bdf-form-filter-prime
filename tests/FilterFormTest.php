@@ -252,7 +252,7 @@ class Person
 
 class PersonMapper extends Mapper
 {
-    public function schema()
+    public function schema(): array
     {
         return [
             'connection' => 'test',
@@ -260,7 +260,7 @@ class PersonMapper extends Mapper
         ];
     }
 
-    public function buildFields($builder)
+    public function buildFields($builder): void
     {
         $builder->string('firstName')->primary();
         $builder->string('lastName')->primary();
