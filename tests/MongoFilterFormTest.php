@@ -219,37 +219,39 @@ class MongoFilterFormTest extends TestCase
     }
 }
 
-class PersonDocumentFormFilter extends MongoFilterForm
-{
-    protected function configureFilters(FilterFormBuilder $builder): void
+if (PHP_VERSION_ID > 70400) {
+    class PersonDocumentFormFilter extends MongoFilterForm
     {
-        $this->setDocument(PersonDocument::class);
+        protected function configureFilters(FilterFormBuilder $builder): void
+        {
+            $this->setDocument(PersonDocument::class);
 
-        $builder->string('firstName')->startWith();
-        $builder->searchBegins('lastName');
-        $builder->embedded('age', function ($builder) {
-            $builder->integer('0')->setter();
-            $builder->integer('1')->setter();
-        })->between();
-    }
-}
-
-class PersonDocument
-{
-    public ?string $firstName = null;
-    public ?string $lastName = null;
-    public ?int $age = null;
-}
-
-class PersonDocumentMapper extends DocumentMapper
-{
-    public function connection(): string
-    {
-        return 'mongo';
+            $builder->string('firstName')->startWith();
+            $builder->searchBegins('lastName');
+            $builder->embedded('age', function ($builder) {
+                $builder->integer('0')->setter();
+                $builder->integer('1')->setter();
+            })->between();
+        }
     }
 
-    public function collection(): string
+    class PersonDocument
     {
-        return 'person';
+        public ?string $firstName = null;
+        public ?string $lastName = null;
+        public ?int $age = null;
+    }
+
+    class PersonDocumentMapper extends DocumentMapper
+    {
+        public function connection(): string
+        {
+            return 'mongo';
+        }
+
+        public function collection(): string
+        {
+            return 'person';
+        }
     }
 }
