@@ -7,7 +7,6 @@ use Bdf\Prime\Connection\ConnectionRegistry;
 use Bdf\Prime\ConnectionManager;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
 use Bdf\Prime\MongoDB\Collection\MongoCollectionLocator;
-use Bdf\Prime\MongoDB\Document\DocumentMapper;
 use Bdf\Prime\MongoDB\Mongo;
 use Bdf\Prime\MongoDB\Query\Compiled\ReadQuery;
 use Bdf\Prime\MongoDB\Query\MongoQuery;
@@ -25,6 +24,8 @@ class MongoFilterFormTest extends TestCase
         if (!class_exists(MongoCollectionLocator::class)) {
             $this->markTestSkipped('Package "b2pweb/bdf-prime-mongodb" v2 is required');
         }
+
+        require_once __DIR__ . '/_files/mongo.php';
     }
 
     /**
@@ -216,42 +217,5 @@ class MongoFilterFormTest extends TestCase
 
         $form->submit([]);
         $this->assertSame($builder, $form->builder);
-    }
-}
-
-if (PHP_VERSION_ID > 70400) {
-    class PersonDocumentFormFilter extends MongoFilterForm
-    {
-        protected function configureFilters(FilterFormBuilder $builder): void
-        {
-            $this->setDocument(PersonDocument::class);
-
-            $builder->string('firstName')->startWith();
-            $builder->searchBegins('lastName');
-            $builder->embedded('age', function ($builder) {
-                $builder->integer('0')->setter();
-                $builder->integer('1')->setter();
-            })->between();
-        }
-    }
-
-    class PersonDocument
-    {
-        public ?string $firstName = null;
-        public ?string $lastName = null;
-        public ?int $age = null;
-    }
-
-    class PersonDocumentMapper extends DocumentMapper
-    {
-        public function connection(): string
-        {
-            return 'mongo';
-        }
-
-        public function collection(): string
-        {
-            return 'person';
-        }
     }
 }
