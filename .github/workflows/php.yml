@@ -101,6 +101,9 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
+    - name: Install dependencies
+      run: composer require b2pweb/bdf-prime-mongodb:~2.0
+
     - name: Run type coverage
       run: composer run-script psalm
 
