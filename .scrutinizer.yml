@@ -1,6 +1,9 @@
 build:
   environment:
-    php: 7.4.22
+    php:
+      version: 7.4.22
+      pecl_extensions:
+        - mongodb
 
   nodes:
     tests:
