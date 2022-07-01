@@ -120,3 +120,36 @@ $entities = $form->apply($query)->all(); // Apply filters and execute query
 // Use directly query() method to create the filter query
 $entities = $form->query();
 ```
+
+## Usage with mongodb
+
+This library also supports Prime MongoDB filter. It requires b2pweb/bdf-prime-mongodb version 2.0.
+To use, simply use `Bdf\Form\Filter\MongoFilterForm` instead of `Bdf\Form\Filter\FilterForm`, and change `$form->setEntity(...)` to `$form->setDocument()`.
+
+```php
+<?php
+
+namespace App\Form;
+
+use Bdf\Form\Filter\MongoFilterForm;
+use Bdf\Form\Filter\FilterFormBuilder;
+
+class MyFilters extends MongoFilterForm
+{
+    public function configureFilters(FilterFormBuilder $builder): void
+    {
+        // Set the document class (note: use $this instead of $builder)
+        $this->setEntity(Person::class);
+
+        // Define filters
+        $builder->searchBegins('firstName');
+        $builder->searchBegins('lastName');
+        $builder->embedded('age', function ($builder) {
+            $builder->integer('0')->setter();
+            $builder->integer('1')->setter();
+        })->between();
+    }
+}
+```
+
+The usage is identical to basic prime entity usage.

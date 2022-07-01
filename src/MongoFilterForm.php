@@ -6,21 +6,20 @@ use BadMethodCallException;
 use Bdf\Form\Aggregate\FormBuilderInterface;
 use Bdf\Form\Custom\CustomForm;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
-use Bdf\Prime\Locatorizable;
-use Bdf\Prime\Query\Contract\Whereable;
-use Bdf\Prime\Query\QueryInterface;
-use Bdf\Prime\Repository\RepositoryInterface;
-use Bdf\Prime\ServiceLocator;
+use Bdf\Prime\MongoDB\Collection\MongoCollectionInterface;
+use Bdf\Prime\MongoDB\Collection\MongoCollectionLocator;
+use Bdf\Prime\MongoDB\Mongo;
+use Bdf\Prime\MongoDB\Query\MongoQuery;
 
 /**
- * Base type for declare a filter form
- *
+ * Base type for declare a filter form for a mongo collection
  * Works like @see CustomForm but for build filters
- * Use this class for declare filters for simple prime entities
+ *
+ * Note: package "b2pweb/bdf-prime-mongodb" as version 2 is required
  *
  * <code>
  * // Declaration
- * class MyFilters extends FilterForm
+ * class MyFilters extends MongoFilterForm
  * {
  *     public function configureFilters(FilterFormBuilder $builder): void
  *     {
@@ -48,36 +47,36 @@ use Bdf\Prime\ServiceLocator;
  * $criteria = $form->value();
  *
  * // Call prime with criteria
- * $list = MyEntity::where($criteria->all())->paginate();
+ * $list = MyDocument::where($criteria->all())->paginate();
  *
  * return $this->render('list', ['entities' => $list]);
  * </code>
  *
  * @method PrimeCriteria value()
  */
-abstract class FilterForm extends BaseFilterForm
+abstract class MongoFilterForm extends BaseFilterForm
 {
     /**
-     * @var ServiceLocator|null
+     * @var MongoCollectionLocator|null
      */
-    private $prime;
+    private $locator;
 
     /**
      * @var class-string|null
      */
-    private $entity;
+    private $document;
 
     /**
      * FilterForm constructor.
      *
      * @param FormBuilderInterface|null $builder
-     * @param ServiceLocator|null $prime
+     * @param MongoCollectionLocator|null $locator
      */
-    public function __construct(?FormBuilderInterface $builder = null, ?ServiceLocator $prime = null)
+    public function __construct(?FormBuilderInterface $builder = null, ?MongoCollectionLocator $locator = null)
     {
         parent::__construct($builder);
 
-        $this->prime = $prime;
+        $this->locator = $locator;
     }
 
     /**
@@ -85,13 +84,7 @@ abstract class FilterForm extends BaseFilterForm
      */
     protected function configure(FormBuilderInterface $builder): void
     {
-        $builder->generates(function (): PrimeCriteria {
-            if ($this->entity && ($this->prime || Locatorizable::isActiveRecordEnabled())) {
-                return $this->repository()->criteria();
-            }
-
-            return new PrimeCriteria();
-        });
+        $builder->generates(PrimeCriteria::class);
 
         parent::configure($builder);
     }
@@ -118,51 +111,47 @@ abstract class FilterForm extends BaseFilterForm
      * $entities = $form->submit($request->query->all())->query()->all();
      * </code>
      *
-     * @return QueryInterface
+     * @return MongoQuery
      *
      * @throws BadMethodCallException When the form is not configured to create the query
      *
      * @see FilterForm::setEntity() To define the entity class
      */
-    final public function query(): QueryInterface
+    final public function query(): MongoQuery
     {
-        return $this->apply($this->repository()->queries()->builder());
+        return $this->apply($this->collection()->query());
     }
 
     /**
-     * Define the handled entity
+     * Define the handled document class
      * This is used by the `query()` method to create the query
      *
-     * @param class-string $entity
+     * @param class-string $document
      */
-    protected final function setEntity(string $entity): void
+    protected final function setDocument(string $document): void
     {
-        $this->entity = $entity;
+        $this->document = $document;
     }
 
     /**
      * Get the query related to the entity
      *
-     * @return RepositoryInterface
+     * @return MongoCollectionInterface
      */
-    private function repository(): RepositoryInterface
+    private function collection(): MongoCollectionInterface
     {
-        if (!$this->entity)  {
-            throw new BadMethodCallException('The entity class is not defined');
+        if (!$this->document)  {
+            throw new BadMethodCallException('The document class is not defined');
         }
 
-        if (!$this->prime) {
-            if (!Locatorizable::isActiveRecordEnabled()) {
-                throw new BadMethodCallException('Prime should be provided on the constructor');
+        if (!$this->locator) {
+            if (!Mongo::isConfigured()) {
+                throw new BadMethodCallException('MongoCollectionLocator should be provided on the constructor');
             }
 
-            $this->prime = Locatorizable::locator();
+            $this->locator = Mongo::locator();
         }
 
-        if (($repository = $this->prime->repository($this->entity)) === null) {
-            throw new BadMethodCallException('The entity '.$this->entity.' is not valid');
-        }
-
-        return $repository;
+        return $this->locator->collection($this->document);
     }
 }

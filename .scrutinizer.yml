@@ -1,11 +1,15 @@
 build:
   environment:
-    php: 7.2.24
+    php:
+      version: 7.4.22
+      pecl_extensions:
+        - mongodb
 
   nodes:
     tests:
       tests:
         override:
+          - command: composer req b2pweb/bdf-prime-mongodb:~2.0
           - command: composer run tests-with-coverage
             coverage:
               file: coverage.xml
