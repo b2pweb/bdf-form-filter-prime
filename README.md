@@ -16,7 +16,7 @@ See :
 ## Installation using composer
 
 ```
-composer require b2pweb/bdf-form-form-filter-prime
+composer require b2pweb/bdf-form-filter-prime
 ```
 
 ## Basic usage
