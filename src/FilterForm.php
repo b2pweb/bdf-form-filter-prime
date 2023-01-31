@@ -7,10 +7,13 @@ use Bdf\Form\Aggregate\FormBuilderInterface;
 use Bdf\Form\Custom\CustomForm;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
 use Bdf\Prime\Locatorizable;
-use Bdf\Prime\Query\Contract\Whereable;
+use Bdf\Prime\Query\Contract\Limitable;
+use Bdf\Prime\Query\Contract\Paginable;
+use Bdf\Prime\Query\Pagination\PaginatorInterface;
 use Bdf\Prime\Query\QueryInterface;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Bdf\Prime\ServiceLocator;
+use InvalidArgumentException;
 
 /**
  * Base type for declare a filter form
@@ -127,6 +130,54 @@ abstract class FilterForm extends BaseFilterForm
     final public function query(): QueryInterface
     {
         return $this->apply($this->repository()->queries()->builder());
+    }
+
+    /**
+     * Execute the query and get a paginator
+     * Page and per page fields should be defined in the form
+     *
+     * <code>
+     * class MyFilters extends FilterForm
+     * {
+     *     public function configureFilters(FilterFormBuilder $builder): void
+     *     {
+     *         // Configure the entity
+     *         $this->setEntity(MyEntity::class);
+     *         // Configure filters...
+     *
+     *         // Pagination fields
+     *         $builder->page();
+     *         $builder->perPage();
+     *     }
+     * }
+     *
+     * // Instantiate the form using container to ensure that the prime service locator is injected
+     * $form = $this->container->get(MyFilters::class);
+     *
+     * // Submit filters and paginate
+     * $paginator = $form->submit($request->query->all())->query()->paginate();
+     * </code>
+     *
+     * @param QueryInterface|null $query The query to paginate. If null, the query will be created from the form.
+     *
+     * @return PaginatorInterface
+     *
+     * @see FilterFormBuilder::page()
+     * @see FilterFormBuilder::perPage()
+     */
+    public final function paginate(?QueryInterface $query = null): PaginatorInterface
+    {
+        if ($query) {
+            $this->apply($query);
+        } else {
+            $query = $this->query();
+        }
+
+        if (!$query instanceof Paginable || !$query instanceof Limitable) {
+            throw new InvalidArgumentException('The query must be Paginable');
+        }
+
+        return $query->paginate($query->getLimit(), $query->getPage());
     }
 
     /**

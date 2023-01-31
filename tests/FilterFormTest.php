@@ -226,6 +226,66 @@ class FilterFormTest extends TestCase
         $form->submit([]);
         $this->assertSame($builder, $form->builder);
     }
+
+    public function test_paginate()
+    {
+        $prime = new ServiceLocator(new ConnectionManager(new ConnectionRegistry(['test' => 'sqlite::memory:'])));
+        $prime->repository(Person::class)->schema()->migrate();
+        $form = new class(null, $prime) extends PersonFormFilter {
+            protected function configureFilters(FilterFormBuilder $builder): void
+            {
+                parent::configureFilters($builder);
+
+                $builder->page();
+                $builder->perPage();
+            }
+        };
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+            'page' => 3,
+            'perPage' => 15,
+        ]);
+
+        $paginator = $form->paginate();
+
+        $this->assertSame(3, $paginator->page());
+        $this->assertSame(15, $paginator->pageMaxRows());
+        $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55 LIMIT 15 OFFSET 30', $paginator->query()->toRawSql());
+    }
+
+    public function test_paginate_with_custom_query()
+    {
+        $prime = new ServiceLocator(new ConnectionManager(new ConnectionRegistry(['test' => 'sqlite::memory:'])));
+        $prime->repository(Person::class)->schema()->migrate();
+        $form = new class(null, $prime) extends PersonFormFilter {
+            protected function configureFilters(FilterFormBuilder $builder): void
+            {
+                parent::configureFilters($builder);
+
+                $builder->page();
+                $builder->perPage();
+            }
+        };
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+            'page' => 3,
+            'perPage' => 15,
+        ]);
+
+        $query = $prime->repository(Person::class)->builder()->where('firstName', '<', 'ZZZ');
+
+        $paginator = $form->paginate($query);
+
+        $this->assertSame(3, $paginator->page());
+        $this->assertSame(15, $paginator->pageMaxRows());
+        $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName < \'ZZZ\' AND (t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55) LIMIT 15 OFFSET 30', $paginator->query()->toRawSql());
+    }
 }
 
 class PersonFormFilter extends FilterForm
