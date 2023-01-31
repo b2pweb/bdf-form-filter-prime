@@ -350,7 +350,7 @@ class FilterFormBuilder implements FormBuilderInterface
      */
     public function page(string $name = 'page')
     {
-        return $this->integer($name, 1)
+        return $this->integer($name)
             ->filter(function ($value) {
                 if (!is_numeric($value)) {
                     return 1;
@@ -372,7 +372,7 @@ class FilterFormBuilder implements FormBuilderInterface
      */
     public function perPage(string $name = 'perPage', int $default = 10)
     {
-        return $this->integer($name, $default)
+        return $this->integer($name)
             ->filter(function ($value) use ($default) {
                 if (!is_numeric($value)) {
                     return $default;

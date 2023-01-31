@@ -10,6 +10,7 @@ use Bdf\Prime\Locatorizable;
 use Bdf\Prime\Mapper\Mapper;
 use Bdf\Prime\Query\Expression\Like;
 use Bdf\Prime\Query\Query;
+use Bdf\Prime\Query\QueryInterface;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Bdf\Prime\ServiceLocator;
 use PHPUnit\Framework\TestCase;
@@ -254,6 +255,18 @@ class FilterFormTest extends TestCase
         $this->assertSame(3, $paginator->page());
         $this->assertSame(15, $paginator->pageMaxRows());
         $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55 LIMIT 15 OFFSET 30', $paginator->query()->toRawSql());
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+        ]);
+
+        $paginator = $form->paginate();
+
+        $this->assertSame(1, $paginator->page());
+        $this->assertSame(10, $paginator->pageMaxRows());
+        $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55 LIMIT 10', $paginator->query()->toRawSql());
     }
 
     public function test_paginate_with_custom_query()
