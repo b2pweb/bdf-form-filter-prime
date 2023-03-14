@@ -3,8 +3,7 @@
 Helper library for BDF Form to create Prime filters.
 
 [![build](https://github.com/b2pweb/bdf-form-filter-prime/actions/workflows/php.yml/badge.svg)](https://github.com/b2pweb/bdf-form-filter-prime/actions/workflows/php.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/bdf-form-filter-prime/?branch=master)
+[![codecov](https://codecov.io/github/b2pweb/bdf-form-filter-prime/branch/master/graph/badge.svg?token=VOFSPEWYKX)](https://app.codecov.io/github/b2pweb/bdf-form-filter-prime)
 [![Packagist Version](https://img.shields.io/packagist/v/b2pweb/bdf-form-filter-prime.svg)](https://packagist.org/packages/b2pweb/bdf-form-filter-prime)
 [![Total Downloads](https://img.shields.io/packagist/dt/b2pweb/bdf-form-filter-prime.svg)](https://packagist.org/packages/b2pweb/bdf-form-filter-prime)
 [![Type Coverage](https://shepherd.dev/github/b2pweb/bdf-form-filter-prime/coverage.svg)](https://shepherd.dev/github/b2pweb/bdf-form-filter-prime)
