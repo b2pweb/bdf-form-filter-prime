@@ -286,4 +286,25 @@ class FilterFormBuilderTest extends TestCase
         $form->attach(new PrimeCriteria())->submit(['foo' => 'bar']);
         $this->assertEquals(new PrimeCriteria(['foo' => (new Like('bar'))->contains()->escape()]), $form->value());
     }
+
+    /**
+     *
+     */
+    public function test_page_and_perPage()
+    {
+        $this->builder->page('foo');
+        $this->builder->perPage('bar', 15);
+        $this->builder->generates(PrimeCriteria::class);
+
+        $form = $this->builder->buildElement();
+
+        $this->assertInstanceOf(IntegerElement::class, $form['foo']->element());
+        $this->assertInstanceOf(IntegerElement::class, $form['bar']->element());
+
+        $this->assertEquals(new PrimeCriteria([':limitPage' => [1, 15]]), $form->submit([])->value());
+        $this->assertEquals(new PrimeCriteria([':limitPage' => [5, 15]]), $form->submit(['foo' => 5])->value());
+        $this->assertEquals(new PrimeCriteria([':limitPage' => [1, 5]]), $form->submit(['bar' => 5])->value());
+        $this->assertEquals(new PrimeCriteria([':limitPage' => [1, 1]]), $form->submit(['foo' => -10, 'bar' => -5])->value());
+        $this->assertEquals(new PrimeCriteria([':limitPage' => [1, 15]]), $form->submit(['foo' => 'invalid', 'bar' => 'invalid'])->value());
+    }
 }

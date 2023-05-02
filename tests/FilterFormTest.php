@@ -8,8 +8,10 @@ use Bdf\Prime\ConnectionManager;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
 use Bdf\Prime\Locatorizable;
 use Bdf\Prime\Mapper\Mapper;
+use Bdf\Prime\Query\Contract\Whereable;
 use Bdf\Prime\Query\Expression\Like;
 use Bdf\Prime\Query\Query;
+use Bdf\Prime\Query\QueryInterface;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Bdf\Prime\ServiceLocator;
 use PHPUnit\Framework\TestCase;
@@ -225,6 +227,109 @@ class FilterFormTest extends TestCase
 
         $form->submit([]);
         $this->assertSame($builder, $form->builder);
+    }
+
+    public function test_paginate()
+    {
+        $prime = new ServiceLocator(new ConnectionManager(new ConnectionRegistry(['test' => 'sqlite::memory:'])));
+        $prime->repository(Person::class)->schema()->migrate();
+        $form = new class(null, $prime) extends PersonFormFilter {
+            protected function configureFilters(FilterFormBuilder $builder): void
+            {
+                parent::configureFilters($builder);
+
+                $builder->page();
+                $builder->perPage();
+            }
+        };
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+            'page' => 3,
+            'perPage' => 15,
+        ]);
+
+        $paginator = $form->paginate();
+
+        $this->assertSame(3, $paginator->page());
+        $this->assertSame(15, $paginator->pageMaxRows());
+        $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55 LIMIT 15 OFFSET 30', $paginator->query()->toRawSql());
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+        ]);
+
+        $paginator = $form->paginate();
+
+        $this->assertSame(1, $paginator->page());
+        $this->assertSame(10, $paginator->pageMaxRows());
+        $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55 LIMIT 10', $paginator->query()->toRawSql());
+    }
+
+    public function test_paginate_with_custom_query()
+    {
+        $prime = new ServiceLocator(new ConnectionManager(new ConnectionRegistry(['test' => 'sqlite::memory:'])));
+        $prime->repository(Person::class)->schema()->migrate();
+        $form = new class(null, $prime) extends PersonFormFilter {
+            protected function configureFilters(FilterFormBuilder $builder): void
+            {
+                parent::configureFilters($builder);
+
+                $builder->page();
+                $builder->perPage();
+            }
+        };
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+            'page' => 3,
+            'perPage' => 15,
+        ]);
+
+        $query = $prime->repository(Person::class)->builder()->where('firstName', '<', 'ZZZ');
+
+        $paginator = $form->paginate($query);
+
+        $this->assertSame(3, $paginator->page());
+        $this->assertSame(15, $paginator->pageMaxRows());
+        $this->assertSame('SELECT t0.* FROM person t0 WHERE t0.firstName < \'ZZZ\' AND (t0.firstName LIKE \'J%\' AND t0.lastName LIKE \'Smi%\' AND t0.age BETWEEN 20 AND 55) LIMIT 15 OFFSET 30', $paginator->query()->toRawSql());
+    }
+
+    public function test_paginate_query_not_paginable()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The query must be Paginable');
+
+        $prime = new ServiceLocator(new ConnectionManager(new ConnectionRegistry(['test' => 'sqlite::memory:'])));
+        $prime->repository(Person::class)->schema()->migrate();
+        $form = new class(null, $prime) extends PersonFormFilter {
+            protected function configureFilters(FilterFormBuilder $builder): void
+            {
+                parent::configureFilters($builder);
+
+                $builder->page();
+                $builder->perPage();
+            }
+        };
+
+        $form->submit([
+            'firstName' => 'J',
+            'lastName' => 'Smi',
+            'age' => [20, 55],
+            'page' => 3,
+            'perPage' => 15,
+        ]);
+
+        $query = $this->createMock(QueryInterface::class);
+        $query->method('where')->willReturnSelf();
+
+        $form->paginate($query);
     }
 }
 

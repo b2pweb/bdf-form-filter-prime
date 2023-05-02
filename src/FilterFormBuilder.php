@@ -19,6 +19,9 @@ use Bdf\Form\Phone\PhoneElementBuilder;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+use function is_numeric;
+use function max;
+
 /**
  * Wrap a form builder for build prime filters
  *
@@ -39,6 +42,11 @@ class FilterFormBuilder implements FormBuilderInterface
      * @var FormBuilderInterface
      */
     private $inner;
+
+    /**
+     * @var BaseFilterForm
+     */
+    private $form;
 
     /**
      * FilterFormBuilder constructor.
@@ -331,5 +339,48 @@ class FilterFormBuilder implements FormBuilderInterface
     public function searchContains(string $name, ?string $default = null)
     {
         return $this->string($name, $default)->contains();
+    }
+
+    /**
+     * Configure field "page" for pagination
+     *
+     * @param non-empty-string $name Page field name. Default to "page"
+     *
+     * @return FilterChildBuilder|IntegerElementBuilder
+     */
+    public function page(string $name = 'page')
+    {
+        return $this->integer($name)
+            ->filter(function ($value) {
+                if (!is_numeric($value)) {
+                    return 1;
+                }
+
+                return max(1, (int) $value);
+            })
+            ->setter('page')
+        ;
+    }
+
+    /**
+     * Configure field "perPage" for pagination
+     *
+     * @param non-empty-string $name Per page field name. Default to "perPage"
+     * @param int $default Default row count. Default to 10
+     *
+     * @return FilterChildBuilder|IntegerElementBuilder
+     */
+    public function perPage(string $name = 'perPage', int $default = 10)
+    {
+        return $this->integer($name)
+            ->filter(function ($value) use ($default) {
+                if (!is_numeric($value)) {
+                    return $default;
+                }
+
+                return max(1, (int) $value);
+            })
+            ->setter('pageMaxRows')
+        ;
     }
 }
