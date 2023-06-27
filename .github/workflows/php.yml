@@ -43,6 +43,36 @@ jobs:
     - name: Run test suite
       run: composer run-script tests
 
+  bdf_form_compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        form-versions: ['1.0', '1.1', '1.2', '1.3', '1.4']
+    name: Compatibility with bdf/form ${{ matrix.form-versions }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set Timezone
+      uses: szenius/set-timezone@v1.0
+      with:
+        timezoneLinux: "Europe/Paris"
+
+    - name: Install PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
+        extensions: json
+        ini-values: date.timezone=Europe/Paris
+    - name: Check PHP Version
+      run: php -v
+
+    - name: Install dependencies
+      run: composer req --dev 'b2pweb/bdf-form:~${{ matrix.form-versions }}.0' --prefer-dist --no-progress
+
+    - name: Run test suite
+      run: composer run-script tests
+
   with_mongodb:
     runs-on: ubuntu-latest
     name: With MongoDB driver

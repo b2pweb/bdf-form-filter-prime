@@ -274,6 +274,16 @@ class FilterFormBuilder implements FormBuilderInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function optional(bool $flag = true): FormBuilderInterface
+    {
+        $this->inner->optional($flag);
+
+        return $this;
+    }
+
+    /**
      * Forward call to inner builder, and rematch the return type
      *
      * @param string $method

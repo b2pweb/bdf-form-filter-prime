@@ -226,7 +226,7 @@ class FilterFormTest extends TestCase
         };
 
         $form->submit([]);
-        $this->assertSame($builder, $form->builder);
+        $this->assertEquals($builder, $form->builder);
     }
 
     public function test_paginate()

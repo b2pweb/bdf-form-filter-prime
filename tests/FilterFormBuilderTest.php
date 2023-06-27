@@ -66,6 +66,11 @@ class FilterFormBuilderTest extends TestCase
 
         $inner->expects($this->once())->method('submit')->with('foo')->willReturn($childBuilder = $this->createMock(ButtonBuilderInterface::class));
         $this->assertSame($childBuilder, $builder->submit('foo'));
+
+        if (method_exists($inner, 'optional')) {
+            $inner->expects($this->once())->method('optional')->with(true);
+            $this->assertSame($builder, $builder->optional());
+        }
     }
 
     /**
