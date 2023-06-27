@@ -216,6 +216,6 @@ class MongoFilterFormTest extends TestCase
         };
 
         $form->submit([]);
-        $this->assertSame($builder, $form->builder);
+        $this->assertEquals($builder, $form->builder);
     }
 }
