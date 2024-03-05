@@ -13,7 +13,9 @@ use Bdf\Prime\Query\Contract\Whereable;
  * Prefer use dedicated implementations
  *
  * @see FilterForm For use base with prime repository system
+ *
  * @method PrimeCriteria value()
+ * @extends CustomForm<PrimeCriteria>
  */
 abstract class BaseFilterForm extends CustomForm
 {

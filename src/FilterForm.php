@@ -173,6 +173,7 @@ abstract class FilterForm extends BaseFilterForm
             $query = $this->query();
         }
 
+        /** @psalm-suppress TypeDoesNotContainType Psalm doesn't like || */
         if (!$query instanceof Paginable || !$query instanceof Limitable) {
             throw new InvalidArgumentException('The query must be Paginable');
         }
