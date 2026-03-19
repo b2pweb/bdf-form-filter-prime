@@ -14,7 +14,10 @@ use Bdf\Form\PropertyAccess\ExtractorInterface;
 use Bdf\Form\PropertyAccess\HydratorInterface;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
 use Bdf\Prime\Query\Expression\Like;
+use Composer\InstalledVersions;
 use PHPUnit\Framework\TestCase;
+
+use function version_compare;
 
 class FilterChildBuilderTest extends TestCase
 {
@@ -56,7 +59,11 @@ class FilterChildBuilderTest extends TestCase
         $inner->expects($this->once())->method('addParametersConfigurator')->with(function() {});
         $this->assertSame($builder, $builder->addParametersConfigurator(function() {}));
 
-        $child = $this->builder->length(['min' => 3])->buildChild()->setParent($parent = new Form(new ChildrenCollection()));
+        if (version_compare(InstalledVersions::getVersion('b2pweb/bdf-form'), '1.7', '>=')) {
+            $child = $this->builder->length(min: 3)->buildChild()->setParent($parent = new Form(new ChildrenCollection()));
+        } else {
+            $child = $this->builder->length(['min' => 3])->buildChild()->setParent($parent = new Form(new ChildrenCollection()));
+        }
         $this->assertFalse($child->element()->submit('a')->valid());
         $this->assertTrue($child->element()->submit('aaa')->valid());
 

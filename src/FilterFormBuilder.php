@@ -7,9 +7,11 @@ use Bdf\Form\Aggregate\ArrayElementBuilder;
 use Bdf\Form\Aggregate\FormBuilderInterface;
 use Bdf\Form\Aggregate\Value\ValueGeneratorInterface;
 use Bdf\Form\Button\ButtonBuilderInterface;
+use Bdf\Form\Child\ChildBuilder;
 use Bdf\Form\Child\ChildBuilderInterface;
 use Bdf\Form\ElementBuilderInterface;
 use Bdf\Form\ElementInterface;
+use Bdf\Form\Leaf\AnyElementBuilder;
 use Bdf\Form\Leaf\BooleanElementBuilder;
 use Bdf\Form\Leaf\Date\DateTimeElementBuilder;
 use Bdf\Form\Leaf\FloatElementBuilder;
@@ -60,7 +62,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function satisfy($constraint, $options = null, bool $append = true)
+    public function satisfy($constraint, $options = null, bool $append = true): static
     {
         $this->inner->satisfy($constraint, $options, $append);
 
@@ -70,7 +72,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function transformer($transformer, bool $append = true)
+    public function transformer($transformer, bool $append = true): static
     {
         $this->inner->transformer($transformer, $append);
 
@@ -80,7 +82,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function value($value)
+    public function value($value): static
     {
         $this->inner->value($value);
 
@@ -179,6 +181,19 @@ class FilterFormBuilder implements FormBuilderInterface
     public function phone(string $name): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->phone($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     *
+     * @return FilterChildBuilder|AnyElementBuilder
+     * @psalm-return FilterChildBuilder<AnyElementBuilder>
+     */
+    public function any(string $name): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->any($name));
     }
 
     /**
@@ -291,7 +306,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @return $this|FilterChildBuilder|mixed
      */
-    public function __call(string $method, array $arguments)
+    public function __call(string $method, array $arguments): mixed
     {
         $return = $this->inner->$method(...$arguments);
 
@@ -316,7 +331,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @see FilterChildBuilder::like()
      */
-    public function search(string $name, ?string $default = null)
+    public function search(string $name, ?string $default = null): FilterChildBuilder
     {
         return $this->string($name, $default)->like();
     }
@@ -331,7 +346,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @see FilterChildBuilder::startWith()
      */
-    public function searchBegins(string $name, ?string $default = null)
+    public function searchBegins(string $name, ?string $default = null): FilterChildBuilder
     {
         return $this->string($name, $default)->startWith();
     }
@@ -346,7 +361,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @see FilterChildBuilder::contains()
      */
-    public function searchContains(string $name, ?string $default = null)
+    public function searchContains(string $name, ?string $default = null): FilterChildBuilder
     {
         return $this->string($name, $default)->contains();
     }
@@ -358,7 +373,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @return FilterChildBuilder|IntegerElementBuilder
      */
-    public function page(string $name = 'page')
+    public function page(string $name = 'page'): FilterChildBuilder
     {
         return $this->integer($name)
             ->filter(function ($value) {
@@ -380,7 +395,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @return FilterChildBuilder|IntegerElementBuilder
      */
-    public function perPage(string $name = 'perPage', int $default = 10)
+    public function perPage(string $name = 'perPage', int $default = 10): FilterChildBuilder
     {
         return $this->integer($name)
             ->filter(function ($value) use ($default) {

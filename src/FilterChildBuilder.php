@@ -69,7 +69,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function hydrator(HydratorInterface $hydrator)
+    public function hydrator(HydratorInterface $hydrator): static
     {
         $this->builder->hydrator($hydrator);
 
@@ -79,7 +79,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function extractor(ExtractorInterface $extractor)
+    public function extractor(ExtractorInterface $extractor): static
     {
         $this->builder->extractor($extractor);
 
@@ -89,7 +89,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function filter($filter, bool $append = true)
+    public function filter($filter, bool $append = true): static
     {
         $this->builder->filter($filter, $append);
 
@@ -99,7 +99,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function default($default)
+    public function default($default): static
     {
         $this->builder->default($default);
 
@@ -109,7 +109,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function depends(string ...$inputNames)
+    public function depends(string ...$inputNames): static
     {
         $this->builder->depends(...$inputNames);
 
@@ -119,7 +119,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function modelTransformer($transformer, bool $append = true)
+    public function modelTransformer($transformer, bool $append = true): static
     {
         $this->builder->modelTransformer($transformer, $append);
 
@@ -129,7 +129,7 @@ class FilterChildBuilder implements ChildBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function addParametersConfigurator(callable $configurator)
+    public function addParametersConfigurator(callable $configurator): static
     {
         $this->builder->addParametersConfigurator($configurator);
 
