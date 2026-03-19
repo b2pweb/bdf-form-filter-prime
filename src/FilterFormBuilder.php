@@ -7,19 +7,20 @@ use Bdf\Form\Aggregate\ArrayElementBuilder;
 use Bdf\Form\Aggregate\FormBuilderInterface;
 use Bdf\Form\Aggregate\Value\ValueGeneratorInterface;
 use Bdf\Form\Button\ButtonBuilderInterface;
-use Bdf\Form\Child\ChildBuilder;
 use Bdf\Form\Child\ChildBuilderInterface;
 use Bdf\Form\ElementBuilderInterface;
 use Bdf\Form\ElementInterface;
 use Bdf\Form\Leaf\AnyElementBuilder;
 use Bdf\Form\Leaf\BooleanElementBuilder;
 use Bdf\Form\Leaf\Date\DateTimeElementBuilder;
+use Bdf\Form\Leaf\EnumElementBuilder;
 use Bdf\Form\Leaf\FloatElementBuilder;
 use Bdf\Form\Leaf\IntegerElementBuilder;
 use Bdf\Form\Leaf\StringElementBuilder;
 use Bdf\Form\Phone\PhoneElementBuilder;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use UnitEnum;
 
 use function is_numeric;
 use function max;
@@ -62,9 +63,9 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function satisfy($constraint, $options = null, bool $append = true): static
+    public function satisfy($constraint, $message = null, bool $append = true): static
     {
-        $this->inner->satisfy($constraint, $options, $append);
+        $this->inner->satisfy($constraint, $message, $append);
 
         return $this;
     }
@@ -197,6 +198,21 @@ class FilterFormBuilder implements FormBuilderInterface
     public function any(string $name): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->any($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     * @param class-string<UnitEnum> $enumClass
+     * @return FilterChildBuilder<EnumElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function enum(string $name, string $enumClass): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->enum($name, $enumClass));
     }
 
     /**
@@ -375,6 +391,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name Page field name. Default to "page"
      *
      * @return FilterChildBuilder<IntegerElementBuilder>
+     * @psalm-suppress UndefinedMagicMethod
      */
     public function page(string $name = 'page'): FilterChildBuilder
     {
@@ -398,6 +415,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param int $default Default row count. Default to 10
      *
      * @return FilterChildBuilder<IntegerElementBuilder>
+     * @psalm-suppress UndefinedMagicMethod
      */
     public function perPage(string $name = 'perPage', int $default = 10): FilterChildBuilder
     {
