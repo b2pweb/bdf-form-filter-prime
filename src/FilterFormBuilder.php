@@ -190,6 +190,9 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @return FilterChildBuilder|AnyElementBuilder
      * @psalm-return FilterChildBuilder<AnyElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      */
     public function any(string $name): ChildBuilderInterface
     {
@@ -327,7 +330,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
-     * @return FilterChildBuilder|StringElementBuilder
+     * @return FilterChildBuilder<StringElementBuilder>
      *
      * @see FilterChildBuilder::like()
      */
@@ -342,7 +345,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
-     * @return FilterChildBuilder|StringElementBuilder
+     * @return FilterChildBuilder<StringElementBuilder>
      *
      * @see FilterChildBuilder::startWith()
      */
@@ -357,7 +360,7 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
-     * @return FilterChildBuilder|StringElementBuilder
+     * @return FilterChildBuilder<StringElementBuilder>
      *
      * @see FilterChildBuilder::contains()
      */
@@ -371,10 +374,11 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @param non-empty-string $name Page field name. Default to "page"
      *
-     * @return FilterChildBuilder|IntegerElementBuilder
+     * @return FilterChildBuilder<IntegerElementBuilder>
      */
     public function page(string $name = 'page'): FilterChildBuilder
     {
+        /** @var FilterChildBuilder<IntegerElementBuilder> */
         return $this->integer($name)
             ->filter(function ($value) {
                 if (!is_numeric($value)) {
@@ -393,10 +397,11 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name Per page field name. Default to "perPage"
      * @param int $default Default row count. Default to 10
      *
-     * @return FilterChildBuilder|IntegerElementBuilder
+     * @return FilterChildBuilder<IntegerElementBuilder>
      */
     public function perPage(string $name = 'perPage', int $default = 10): FilterChildBuilder
     {
+        /** @var FilterChildBuilder<IntegerElementBuilder> */
         return $this->integer($name)
             ->filter(function ($value) use ($default) {
                 if (!is_numeric($value)) {
