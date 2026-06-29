@@ -12,14 +12,19 @@ use Bdf\Form\Child\ChildBuilderInterface;
 use Bdf\Form\Leaf\BooleanElement;
 use Bdf\Form\Leaf\Date\DateTimeElement;
 use Bdf\Form\Leaf\FloatElement;
+use Bdf\Form\Leaf\Helper\EmailElement;
+use Bdf\Form\Leaf\Helper\UrlElement;
 use Bdf\Form\Leaf\IntegerElement;
 use Bdf\Form\Leaf\StringElement;
 use Bdf\Form\Phone\PhoneElement;
+use Bdf\Form\Struct\StructForm;
 use Bdf\Prime\Entity\Criteria as PrimeCriteria;
 use Bdf\Prime\Query\Expression\Like;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+use function class_exists;
 
 class FilterFormBuilderTest extends TestCase
 {
@@ -188,6 +193,32 @@ class FilterFormBuilderTest extends TestCase
     /**
      *
      */
+    public function test_url()
+    {
+        $childBuilder = $this->builder->url('foo');
+        $this->assertInstanceOf(FilterChildBuilder::class, $childBuilder);
+
+        $form = $this->builder->buildElement();
+
+        $this->assertInstanceOf(UrlElement::class, $form['foo']->element());
+    }
+
+    /**
+     *
+     */
+    public function test_email()
+    {
+        $childBuilder = $this->builder->email('foo');
+        $this->assertInstanceOf(FilterChildBuilder::class, $childBuilder);
+
+        $form = $this->builder->buildElement();
+
+        $this->assertInstanceOf(EmailElement::class, $form['foo']->element());
+    }
+
+    /**
+     *
+     */
     public function test_dateTime()
     {
         $childBuilder = $this->builder->dateTime('foo');
@@ -211,6 +242,24 @@ class FilterFormBuilderTest extends TestCase
         $form = $this->builder->buildElement();
 
         $this->assertInstanceOf(Form::class, $form['foo']->element());
+        $this->assertInstanceOf(StringElement::class, $form['foo']->element()['bar']->element());
+    }
+
+    /**
+     *
+     */
+    public function test_struct()
+    {
+        if (!class_exists(StructForm::class)) {
+            $this->markTestSkipped('b2pweb/bdf-form 2.0 required for this test');
+        }
+
+        $childBuilder = $this->builder->struct('foo', SimpleStruct::class);
+        $this->assertInstanceOf(FilterChildBuilder::class, $childBuilder);
+
+        $form = $this->builder->buildElement();
+
+        $this->assertInstanceOf(StructForm::class, $form['foo']->element());
         $this->assertInstanceOf(StringElement::class, $form['foo']->element()['bar']->element());
     }
 
@@ -312,4 +361,9 @@ class FilterFormBuilderTest extends TestCase
         $this->assertEquals(new PrimeCriteria([':limitPage' => [1, 1]]), $form->submit(['foo' => -10, 'bar' => -5])->value());
         $this->assertEquals(new PrimeCriteria([':limitPage' => [1, 15]]), $form->submit(['foo' => 'invalid', 'bar' => 'invalid'])->value());
     }
+}
+
+class SimpleStruct
+{
+    public string $bar;
 }

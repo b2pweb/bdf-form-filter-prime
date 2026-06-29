@@ -45,7 +45,7 @@ final class Criteria extends AbstractAccessor implements HydratorInterface
     /**
      * {@inheritdoc}
      */
-    public function hydrate(&$target, $value)
+    public function hydrate(&$target, $value): void
     {
         if (!$target instanceof PrimeCriteria) {
             throw new TypeError('$criteria must be an instance of '.PrimeCriteria::class);

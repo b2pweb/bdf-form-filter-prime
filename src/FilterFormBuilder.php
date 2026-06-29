@@ -7,17 +7,23 @@ use Bdf\Form\Aggregate\ArrayElementBuilder;
 use Bdf\Form\Aggregate\FormBuilderInterface;
 use Bdf\Form\Aggregate\Value\ValueGeneratorInterface;
 use Bdf\Form\Button\ButtonBuilderInterface;
+use Bdf\Form\Child\ChildBuilder;
 use Bdf\Form\Child\ChildBuilderInterface;
 use Bdf\Form\ElementBuilderInterface;
 use Bdf\Form\ElementInterface;
+use Bdf\Form\Leaf\AnyElementBuilder;
 use Bdf\Form\Leaf\BooleanElementBuilder;
 use Bdf\Form\Leaf\Date\DateTimeElementBuilder;
+use Bdf\Form\Leaf\EnumElementBuilder;
 use Bdf\Form\Leaf\FloatElementBuilder;
+use Bdf\Form\Leaf\Helper\EmailElementBuilder;
+use Bdf\Form\Leaf\Helper\UrlElementBuilder;
 use Bdf\Form\Leaf\IntegerElementBuilder;
 use Bdf\Form\Leaf\StringElementBuilder;
 use Bdf\Form\Phone\PhoneElementBuilder;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use UnitEnum;
 
 use function is_numeric;
 use function max;
@@ -60,9 +66,9 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function satisfy($constraint, $options = null, bool $append = true)
+    public function satisfy($constraint, $message = null, bool $append = true): static
     {
-        $this->inner->satisfy($constraint, $options, $append);
+        $this->inner->satisfy($constraint, $message, $append);
 
         return $this;
     }
@@ -70,7 +76,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function transformer($transformer, bool $append = true)
+    public function transformer($transformer, bool $append = true): static
     {
         $this->inner->transformer($transformer, $append);
 
@@ -80,7 +86,7 @@ class FilterFormBuilder implements FormBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function value($value)
+    public function value($value): static
     {
         $this->inner->value($value);
 
@@ -183,6 +189,69 @@ class FilterFormBuilder implements FormBuilderInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     *
+     * @return FilterChildBuilder|AnyElementBuilder
+     * @psalm-return FilterChildBuilder<AnyElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function any(string $name): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->any($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     *
+     * @return FilterChildBuilder|EmailElementBuilder
+     * @psalm-return FilterChildBuilder<EmailElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function email(string $name): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->email($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     *
+     * @return FilterChildBuilder|UrlElementBuilder
+     * @psalm-return FilterChildBuilder<UrlElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function url(string $name): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->url($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     * @param class-string<UnitEnum> $enumClass
+     * @return FilterChildBuilder<EnumElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function enum(string $name, string $enumClass): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->enum($name, $enumClass));
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function csrf(string $name = '_token'): ChildBuilderInterface
     {
@@ -200,6 +269,14 @@ class FilterFormBuilder implements FormBuilderInterface
     public function embedded(string $name, ?callable $configurator = null): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->embedded($name, $configurator));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function struct(string $name, string $structClass): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->struct($name, $structClass));
     }
 
     /**
@@ -291,7 +368,7 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @return $this|FilterChildBuilder|mixed
      */
-    public function __call(string $method, array $arguments)
+    public function __call(string $method, array $arguments): mixed
     {
         $return = $this->inner->$method(...$arguments);
 
@@ -312,11 +389,11 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
-     * @return FilterChildBuilder|StringElementBuilder
+     * @return FilterChildBuilder<StringElementBuilder>
      *
      * @see FilterChildBuilder::like()
      */
-    public function search(string $name, ?string $default = null)
+    public function search(string $name, ?string $default = null): FilterChildBuilder
     {
         return $this->string($name, $default)->like();
     }
@@ -327,11 +404,11 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
-     * @return FilterChildBuilder|StringElementBuilder
+     * @return FilterChildBuilder<StringElementBuilder>
      *
      * @see FilterChildBuilder::startWith()
      */
-    public function searchBegins(string $name, ?string $default = null)
+    public function searchBegins(string $name, ?string $default = null): FilterChildBuilder
     {
         return $this->string($name, $default)->startWith();
     }
@@ -342,11 +419,11 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name The field name
      * @param string|null $default Default field value
      *
-     * @return FilterChildBuilder|StringElementBuilder
+     * @return FilterChildBuilder<StringElementBuilder>
      *
      * @see FilterChildBuilder::contains()
      */
-    public function searchContains(string $name, ?string $default = null)
+    public function searchContains(string $name, ?string $default = null): FilterChildBuilder
     {
         return $this->string($name, $default)->contains();
     }
@@ -356,10 +433,12 @@ class FilterFormBuilder implements FormBuilderInterface
      *
      * @param non-empty-string $name Page field name. Default to "page"
      *
-     * @return FilterChildBuilder|IntegerElementBuilder
+     * @return FilterChildBuilder<IntegerElementBuilder>
+     * @psalm-suppress UndefinedMagicMethod
      */
-    public function page(string $name = 'page')
+    public function page(string $name = 'page'): FilterChildBuilder
     {
+        /** @var FilterChildBuilder<IntegerElementBuilder> */
         return $this->integer($name)
             ->filter(function ($value) {
                 if (!is_numeric($value)) {
@@ -378,10 +457,12 @@ class FilterFormBuilder implements FormBuilderInterface
      * @param non-empty-string $name Per page field name. Default to "perPage"
      * @param int $default Default row count. Default to 10
      *
-     * @return FilterChildBuilder|IntegerElementBuilder
+     * @return FilterChildBuilder<IntegerElementBuilder>
+     * @psalm-suppress UndefinedMagicMethod
      */
-    public function perPage(string $name = 'perPage', int $default = 10)
+    public function perPage(string $name = 'perPage', int $default = 10): FilterChildBuilder
     {
+        /** @var FilterChildBuilder<IntegerElementBuilder> */
         return $this->integer($name)
             ->filter(function ($value) use ($default) {
                 if (!is_numeric($value)) {
