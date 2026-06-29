@@ -7,6 +7,7 @@ use Bdf\Form\Aggregate\ArrayElementBuilder;
 use Bdf\Form\Aggregate\FormBuilderInterface;
 use Bdf\Form\Aggregate\Value\ValueGeneratorInterface;
 use Bdf\Form\Button\ButtonBuilderInterface;
+use Bdf\Form\Child\ChildBuilder;
 use Bdf\Form\Child\ChildBuilderInterface;
 use Bdf\Form\ElementBuilderInterface;
 use Bdf\Form\ElementInterface;
@@ -15,6 +16,8 @@ use Bdf\Form\Leaf\BooleanElementBuilder;
 use Bdf\Form\Leaf\Date\DateTimeElementBuilder;
 use Bdf\Form\Leaf\EnumElementBuilder;
 use Bdf\Form\Leaf\FloatElementBuilder;
+use Bdf\Form\Leaf\Helper\EmailElementBuilder;
+use Bdf\Form\Leaf\Helper\UrlElementBuilder;
 use Bdf\Form\Leaf\IntegerElementBuilder;
 use Bdf\Form\Leaf\StringElementBuilder;
 use Bdf\Form\Phone\PhoneElementBuilder;
@@ -204,6 +207,38 @@ class FilterFormBuilder implements FormBuilderInterface
      * {@inheritdoc}
      *
      * @param non-empty-string $name
+     *
+     * @return FilterChildBuilder|EmailElementBuilder
+     * @psalm-return FilterChildBuilder<EmailElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function email(string $name): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->email($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
+     *
+     * @return FilterChildBuilder|UrlElementBuilder
+     * @psalm-return FilterChildBuilder<UrlElementBuilder>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    public function url(string $name): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->url($name));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param non-empty-string $name
      * @param class-string<UnitEnum> $enumClass
      * @return FilterChildBuilder<EnumElementBuilder>
      *
@@ -234,6 +269,14 @@ class FilterFormBuilder implements FormBuilderInterface
     public function embedded(string $name, ?callable $configurator = null): ChildBuilderInterface
     {
         return new FilterChildBuilder($this->inner->embedded($name, $configurator));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function struct(string $name, string $structClass): ChildBuilderInterface
+    {
+        return new FilterChildBuilder($this->inner->struct($name, $structClass));
     }
 
     /**
